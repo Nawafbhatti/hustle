@@ -42,3 +42,16 @@ class Event(models.Model):
 class Gallery(models.Model):
     
     Image = models.ImageField(upload_to='images/')
+    
+    
+class Contact(models.Model):
+    
+    full_name = models.CharField(max_length=255)
+    email = models.CharField(max_length=255)
+    company = models.CharField(max_length=255)
+    cell = models.CharField(max_length=255)
+    message = models.TextField(null=True)
+    
+    def __str__(self):
+        return self.full_name
+    

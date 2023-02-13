@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from app.models import Event, Speaker, Sponsor
+from app.models import Event, Speaker, Sponsor, Gallery, Contact
 
 
 class SponsorSerializer(serializers.ModelSerializer):
@@ -19,4 +19,16 @@ class EventSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Event
+        fields = '__all__'
+
+class GallerySerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Gallery
+        fields = '__all__'
+        
+class ContactSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Contact
         fields = '__all__'
