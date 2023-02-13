@@ -19,4 +19,4 @@ class EventSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Event
-        exclude = ['id']
+        fields = '__all__'
