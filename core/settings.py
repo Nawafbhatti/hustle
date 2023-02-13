@@ -132,7 +132,7 @@ MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOWED_ORIGINS = ["https://7e1d-39-37-167-10.in.ngrok.io"]
+CORS_ALLOWED_ORIGINS = ["http://nofi.pythonanywhere.com/"]
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
