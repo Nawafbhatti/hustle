@@ -138,7 +138,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://nofi.pythonanywhere.com",
     "http://localhost:3000",
     "http://localhost:5173",
-    ]
+]
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [

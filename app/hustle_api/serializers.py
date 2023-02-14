@@ -6,16 +6,18 @@ class SponsorSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Sponsor
+        fields = '__all__'
 
 class SpeakerSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Speaker
+        fields = '__all__'
 
 class EventSerializer(serializers.ModelSerializer):
     
-    sponsor = serializers.StringRelatedField(many=True, read_only=True)
-    speaker = serializers.StringRelatedField(many=True, read_only=True)
+    speakers = SpeakerSerializer(many=True, read_only=True)
+    sponsors = SponsorSerializer(many=True, read_only=True)
     
     class Meta:
         model = Event
