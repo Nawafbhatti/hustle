@@ -145,3 +145,6 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
     ]
 }
+
+STRIPE_TEST_PUBLISHABLE_KEY = "pk_test_51JhZfMHbblhcsYPtkpwAdZeD1VIRdx5kdxRhrtuQRnj74NuTO2VcLgQGQHUROujiw5cC9H7jJlttcQ30rRByCwUr00jaQxosNq"
+STRIPE_TEST_SECRET_KEY = "sk_test_51JhZfMHbblhcsYPtjBWVfWMQzGLCjoM83pSFW73cg8sRtmDmHR0M4vkN7jvv233n299QXxpZxPJGikQ3ThbQwL8o00wlNJhPkY"

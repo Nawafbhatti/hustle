@@ -95,3 +95,35 @@ class Contact(models.Model):
     def __str__(self):
         return self.full_name
     
+
+class EventRegisterForm(models.Model):
+    
+    name = models.CharField(max_length=255, null=True, blank=True)
+    email = models.CharField(max_length=255, null=True, blank=True)
+    contact = models.CharField(max_length=255, null=True, blank=True)
+    number_of_persons = models.IntegerField(null=True, blank=True)
+    
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, null=True, blank=True)
+    
+    def __str__(self):
+        return self.email
+    
+class PAYMENT(models.Model):
+    
+    options = (
+    ("Created", "Created"),
+    ("Completed", "Completed"),
+    ("Purchased", "Purchased"),
+    ("Cancel", "Cancel"),
+    )
+
+    eventregister = models.ForeignKey(EventRegisterForm, on_delete=models.CASCADE, null=True, blank=True)
+    
+    total_price = models.CharField(max_length=255)
+    session_id = models.TextField()
+    stripe_payment_intent = models.CharField(max_length=255)
+    status = models.CharField(max_length=255, choices=options)
+
+    def __str__(self):
+        return self.stripe_payment_intent
+    

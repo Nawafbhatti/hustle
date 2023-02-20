@@ -1,3 +1,94 @@
-from django.shortcuts import render
-
+from django.shortcuts import redirect, get_object_or_404
+import stripe
+from django.http import JsonResponse, HttpResponseNotFound, HttpResponse
+from django.views.generic import TemplateView, View
+from django.urls import reverse
+import datetime
+from django.conf import settings
+from django.template.loader import render_to_string
+from app.models import PAYMENT, EventRegisterForm, Event
+from app.hustle_api.serializers import EventRegisterSerializer, PaymentSerializer
 # Create your views here.
+
+def create_checkout_session(request, id):
+    
+    event_instance = Event.objects.filter(id=id).last()
+    
+    serializer = EventRegisterSerializer(data=request.data)
+    
+    if serializer.is_valid():
+        name = serializer.validated_data['name']
+        email = serializer.validated_data['email']
+        persons = serializer.validated_data['persons']
+        price = serializer.validated_data['price']
+        total_price = serializer.validated_data['totalprice']
+        
+        register_instance = EventRegisterForm.objects.create(name=name,
+                                                            email=email,
+                                                            number_of_persons = persons,
+                                                            event=event_instance)
+    
+    serializerPayment = PaymentSerializer(data=request.data)
+    
+    stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
+
+    checkout_session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=[
+            {
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                    'name': 'Package',
+                    },
+                    'unit_amount': int(total_price * 100),
+                },
+                'quantity': 1,
+            }
+        ],
+        
+        mode='payment',
+        success_url=request.build_absolute_uri(
+            reverse('success')
+        ) + f"?id={id}" + "&session_id={CHECKOUT_SESSION_ID}",
+        cancel_url=request.build_absolute_uri(reverse('failed')),
+    )
+    
+    if serializerPayment.is_valid():
+        pricetopay = serializerPayment.validated_data['totalprice']
+        
+        create_payment = PAYMENT.objects.create(
+                                   eventregister=register_instance,
+                                   total_price = pricetopay,
+                                   status = 'Created',
+                                   stripe_payment_intent = checkout_session['payment_intent'],
+                                   )
+        
+    create_payment.save()
+    
+    return JsonResponse({'sessionId': checkout_session.id, 'home': False})
+
+class PaymentSuccessView(View):
+    
+    def get(self, request, *args, **kwargs):
+        session_id = request.GET.get('session_id')
+        prodid = request.GET.get('id')
+        prodid = int(prodid)
+        if session_id is None or PAYMENT.objects.filter(session_id=session_id, status='Purchased').exists(): return HttpResponseNotFound()
+
+        stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
+        try: session = stripe.checkout.Session.retrieve(session_id)
+        except: return HttpResponseNotFound()
+        service_order = get_object_or_404(PAYMENT, stripe_payment_intent=session.payment_intent)
+        
+        if service_order:
+            service_order.status = 'Purchased'
+            service_order.session_id = session_id
+            service_order.save()
+            
+            return JsonResponse(data="Payment is Successfull and Event is Registered.")
+        
+        return JsonResponse(data="Something went wrong with Stripe. Please try again.")
+
+def paymentfailed(request):
+    return JsonResponse(data="Something went wrong with Stripe. Please try again.")

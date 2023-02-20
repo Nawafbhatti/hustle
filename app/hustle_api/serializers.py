@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from app.models import Event, Speaker, Sponsor, Gallery, Contact, SponsorCategory, Items
+from app.models import Event, Speaker, Sponsor, Gallery, Contact, SponsorCategory, Items, EventRegisterForm, PAYMENT
 
 class SponsorCategorySerializer(serializers.ModelSerializer):
     
@@ -45,4 +45,20 @@ class ContactSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Contact
+        fields = '__all__'
+        
+class EventRegisterSerializer(serializers.ModelSerializer):
+    
+    event = EventSerializer(many=False, read_only=True)
+    
+    class Meta:
+        model = EventRegisterForm
+        fields = '__all__'
+        
+class PaymentSerializer(serializers.ModelSerializer):
+    
+    eventregister = EventRegisterSerializer(many=False, read_only=True)
+    
+    class Meta:
+        model = PAYMENT
         fields = '__all__'
