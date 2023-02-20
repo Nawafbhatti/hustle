@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.db.models import Count
 
 class Sponsor(models.Model):
     
@@ -61,6 +61,23 @@ class Event(models.Model):
     
     def __str__(self):
         return self.title
+    
+    def get_sponsors_by_category(self):
+        
+        sponsors = self.sponsors.values('sponsor_type__name','id', 'name', 'image', 'text')
+        sponsors = sponsors.annotate(category_count=Count('sponsor_type'))
+        sponsor_data = {}
+        
+        for sponsor in sponsors:
+            category_name = sponsor['sponsor_type__name']
+            sponsor_data.setdefault(category_name, []).append({
+                'id': sponsor['id'],
+                'name': sponsor['name'],
+                'image': sponsor['image'],
+                'text': sponsor['text']
+                })
+            
+        return sponsor_data
     
 class Gallery(models.Model):
     

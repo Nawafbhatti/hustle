@@ -30,11 +30,10 @@ class CounterSerializer(serializers.ModelSerializer):
 class EventSerializer(serializers.ModelSerializer):
     
     speakers = SpeakerSerializer(many=True, read_only=True)
-    sponsors = SponsorSerializer(many=True, read_only=True)
     
     class Meta:
         model = Event
-        fields = '__all__'
+        exclude= ('sponsors',)
 
 class GallerySerializer(serializers.ModelSerializer):
     
