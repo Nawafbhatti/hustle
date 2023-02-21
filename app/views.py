@@ -24,15 +24,17 @@ def create_checkout_session(request, id):
     except:
         return Response(status=status.HTTP_204_NO_CONTENT)
     
-    if serializer.is_valid():
-        name = serializer.validated_data['name']
-        email = serializer.validated_data['email']
-        persons = serializer.validated_data['persons']
-        price = serializer.validated_data['price']
-        total_price = serializer.validated_data['totalprice']
+    if request.method=="POST":
+        
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        contact = request.POST.get("contact")
+        persons = request.POST.get("persons")
+        total_price = request.POST.get("totalprice")
         
         register_instance = EventRegisterForm.objects.create(name=name,
                                                             email=email,
+                                                            contact=contact,
                                                             number_of_persons = persons,
                                                             event=event_instance)
     else:
@@ -51,7 +53,7 @@ def create_checkout_session(request, id):
                     'product_data': {
                     'name': 'Package',
                     },
-                    'unit_amount': int(total_price * 100),
+                    'unit_amount': int(total_price),
                 },
                 'quantity': 1,
             }
@@ -65,9 +67,8 @@ def create_checkout_session(request, id):
     )
     
     if serializerPayment.is_valid():
-        pricetopay = serializerPayment.validated_data['totalprice']
         PAYMENT.objects.create(eventregister=register_instance,
-                               total_price = pricetopay,
+                               total_price = total_price,
                                status = 'Created',
                                stripe_payment_intent = checkout_session['payment_intent'],)
         
