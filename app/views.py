@@ -9,12 +9,20 @@ from django.template.loader import render_to_string
 from app.models import PAYMENT, EventRegisterForm, Event
 from app.hustle_api.serializers import EventRegisterSerializer, PaymentSerializer
 # Create your views here.
+from rest_framework.decorators import api_view
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
+@api_view(['GET', 'POST'])
 def create_checkout_session(request, id):
     
     event_instance = Event.objects.filter(id=id).last()
     
-    serializer = EventRegisterSerializer(data=request.data)
+    try:
+        serializer = EventRegisterSerializer(data=request.data)
+    except:
+        return Response(status=status.HTTP_204_NO_CONTENT)
     
     if serializer.is_valid():
         name = serializer.validated_data['name']
@@ -27,6 +35,8 @@ def create_checkout_session(request, id):
                                                             email=email,
                                                             number_of_persons = persons,
                                                             event=event_instance)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     serializerPayment = PaymentSerializer(data=request.data)
     
@@ -56,19 +66,18 @@ def create_checkout_session(request, id):
     
     if serializerPayment.is_valid():
         pricetopay = serializerPayment.validated_data['totalprice']
+        PAYMENT.objects.create(eventregister=register_instance,
+                               total_price = pricetopay,
+                               status = 'Created',
+                               stripe_payment_intent = checkout_session['payment_intent'],)
         
-        create_payment = PAYMENT.objects.create(
-                                   eventregister=register_instance,
-                                   total_price = pricetopay,
-                                   status = 'Created',
-                                   stripe_payment_intent = checkout_session['payment_intent'],
-                                   )
-        
-    create_payment.save()
+        return Response({'sessionId': checkout_session.id, 'home': False}, status=status.HTTP_200_OK)
     
-    return JsonResponse({'sessionId': checkout_session.id, 'home': False})
+    else:
+        return Response(serializerPayment.errors, status=status.HTTP_403_FORBIDDEN)
 
-class PaymentSuccessView(View):
+
+class PaymentSuccessView(APIView):
     
     def get(self, request, *args, **kwargs):
         session_id = request.GET.get('session_id')
@@ -86,9 +95,10 @@ class PaymentSuccessView(View):
             service_order.session_id = session_id
             service_order.save()
             
-            return JsonResponse(data="Payment is Successfull and Event is Registered.")
+            
+            return Response(status=status.HTTP_200_OK, data="Payment is Successfull")
         
-        return JsonResponse(data="Something went wrong with Stripe. Please try again.")
+        return Response(data="Something went wrong with Stripe. Please try again.")
 
 def paymentfailed(request):
     return JsonResponse(data="Something went wrong with Stripe. Please try again.")
