@@ -19,28 +19,26 @@ def create_checkout_session(request, id):
     
     event_instance = Event.objects.filter(id=id).last()
     
-    # try:
-    #     serializer = EventRegisterSerializer(data=request.data)
-    # except:
-    #     return Response(status=status.HTTP_204_NO_CONTENT)
+    try:
+        serializer = EventRegisterSerializer(data=request.data)
+    except:
+        return Response(status=status.HTTP_204_NO_CONTENT)
     
-    if request.method=="POST":
-        print(request.POST)
-        name = request.POST.get("name")
-        email = request.POST.get("email")
-        contact = request.POST.get("contact")
-        persons = request.POST.get("persons")
-        total_price = request.POST.get("totalprice")
-        
+    if serializer.is_valid():
+        print(serializer.data, request.POST)
+        name = serializer.validated_data['name']
+        email = serializer.validated_data['email']
+        contact = serializer.validated_data['contact']
+        persons = serializer.validated_data['number_of_persons']
+        # total_price = serializer.validated_data['totalprice']
+        total_price = 34.0
         register_instance = EventRegisterForm.objects.create(name=name,
                                                             email=email,
                                                             contact=contact,
                                                             number_of_persons = persons,
                                                             event=event_instance)
     else:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-    
-    serializerPayment = PaymentSerializer(data=request.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
 
@@ -53,7 +51,7 @@ def create_checkout_session(request, id):
                     'product_data': {
                     'name': 'Package',
                     },
-                    'unit_amount': int(total_price),
+                    'unit_amount': int(total_price * 100),
                 },
                 'quantity': 1,
             }
