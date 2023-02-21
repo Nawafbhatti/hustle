@@ -19,13 +19,13 @@ def create_checkout_session(request, id):
     
     event_instance = Event.objects.filter(id=id).last()
     
-    try:
-        serializer = EventRegisterSerializer(data=request.data)
-    except:
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    # try:
+    #     serializer = EventRegisterSerializer(data=request.data)
+    # except:
+    #     return Response(status=status.HTTP_204_NO_CONTENT)
     
     if request.method=="POST":
-        
+        print(request.POST)
         name = request.POST.get("name")
         email = request.POST.get("email")
         contact = request.POST.get("contact")
@@ -38,7 +38,7 @@ def create_checkout_session(request, id):
                                                             number_of_persons = persons,
                                                             event=event_instance)
     else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
     
     serializerPayment = PaymentSerializer(data=request.data)
     
@@ -66,7 +66,8 @@ def create_checkout_session(request, id):
         cancel_url=request.build_absolute_uri(reverse('failed')),
     )
     
-    if serializerPayment.is_valid():
+    if name:
+        
         PAYMENT.objects.create(eventregister=register_instance,
                                total_price = total_price,
                                status = 'Created',
@@ -75,7 +76,7 @@ def create_checkout_session(request, id):
         return Response({'sessionId': checkout_session.id, 'home': False}, status=status.HTTP_200_OK)
     
     else:
-        return Response(serializerPayment.errors, status=status.HTTP_403_FORBIDDEN)
+        return Response(status=status.HTTP_403_FORBIDDEN)
 
 
 class PaymentSuccessView(APIView):
