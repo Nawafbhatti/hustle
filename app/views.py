@@ -30,8 +30,7 @@ def create_checkout_session(request, id):
         email = serializer.validated_data['email']
         contact = serializer.validated_data['contact']
         persons = serializer.validated_data['number_of_persons']
-        # total_price = serializer.validated_data['totalprice']
-        total_price = 34.0
+        total_price = int(request.GET.get("t"))
         register_instance = EventRegisterForm.objects.create(name=name,
                                                             email=email,
                                                             contact=contact,
@@ -39,6 +38,8 @@ def create_checkout_session(request, id):
                                                             event=event_instance)
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    serializerPayment = PaymentSerializer(data=request.data)
     
     stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
 
