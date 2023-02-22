@@ -77,6 +77,7 @@ def create_checkout_session(request, id):
     else:
         return Response(status=status.HTTP_403_FORBIDDEN)
 
+from django.http import HttpResponseRedirect
 
 class PaymentSuccessView(APIView):
     
@@ -96,8 +97,8 @@ class PaymentSuccessView(APIView):
             service_order.session_id = session_id
             service_order.save()
             
-            
-            return Response(status=status.HTTP_200_OK, data="Payment is Successfull")
+            return HttpResponseRedirect('/redirect/')
+            # return Response(status=status.HTTP_200_OK, data="Payment is Successfull")
         
         return Response(data="Something went wrong with Stripe. Please try again.")
 

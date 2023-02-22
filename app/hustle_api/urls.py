@@ -1,6 +1,7 @@
 from django.urls import path
 from app.hustle_api.views import EventAPIView, EventDetailAPI, GalleryListView, Contact_create, CounterItemAPI
 from app.views import create_checkout_session, PaymentSuccessView, paymentfailed
+from django.views.generic import RedirectView
 
 urlpatterns = [
     
@@ -13,4 +14,5 @@ urlpatterns = [
     path("payment/<int:id>", create_checkout_session, name='api_checkout_session'),
     path('success/', PaymentSuccessView.as_view(), name='success'),
     path('failed/', paymentfailed , name='failed'),
+    path('redirect/', RedirectView.as_view(url='http://localhost:5173/success')),
 ]
