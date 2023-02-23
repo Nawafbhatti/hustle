@@ -14,5 +14,6 @@ urlpatterns = [
     path("payment/<int:id>", create_checkout_session, name='api_checkout_session'),
     path('success/', PaymentSuccessView.as_view(), name='success'),
     path('failed/', paymentfailed , name='failed'),
+    
     path('redirect/', RedirectView.as_view(url='http://localhost:5173/success')),
 ]
