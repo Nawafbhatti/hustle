@@ -139,6 +139,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://nofi.pythonanywhere.com",
     "http://localhost:3000",
     "http://localhost:5173",
+    "http://ec2-52-198-151-181.ap-northeast-1.compute.amazonaws.com/",
 ]
 
 REST_FRAMEWORK = {
