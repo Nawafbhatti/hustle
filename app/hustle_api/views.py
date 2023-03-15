@@ -3,13 +3,14 @@ from rest_framework import generics
 from app.hustle_api.serializers import EventSerializer, GallerySerializer, ContactSerializer, CounterSerializer
 from app.models import Event, Gallery, Contact, Items
 from django.http import JsonResponse
+from rest_framework.response import Response
 
 class EventAPIView(generics.ListAPIView):
     
     serializer_class = EventSerializer
     queryset = Event.objects.all()
 
-from rest_framework.response import Response
+
     
 class EventDetailAPI(generics.RetrieveAPIView):
     

@@ -15,5 +15,5 @@ urlpatterns = [
     path('success/', PaymentSuccessView.as_view(), name='success'),
     path('failed/', paymentfailed , name='failed'),
     
-    path('redirect/', RedirectView.as_view(url='http://localhost:5173/success')),
+    path('redirect/', RedirectView.as_view(url='http://52.194.244.220/success')),
 ]
