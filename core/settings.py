@@ -140,6 +140,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
     "http://ec2-52-198-151-181.ap-northeast-1.compute.amazonaws.com",
+    "http://52.194.244.220/",
 ]
 
 REST_FRAMEWORK = {
