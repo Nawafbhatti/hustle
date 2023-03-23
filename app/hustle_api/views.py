@@ -18,6 +18,7 @@ class EventDetailAPI(generics.RetrieveAPIView):
     
     serializer_class = EventSerializer
     queryset = Event.objects.all()
+    lookup_field = 'slug'
     
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()

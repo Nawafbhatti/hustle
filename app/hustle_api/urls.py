@@ -10,7 +10,7 @@ urlpatterns = [
     path('create-contact/', Contact_create.as_view(), name="create-contact"),
     path('counter-items/<int:pk>', CounterItemAPI.as_view(), name="counter-items"),
     path('home-counter/', HomeCounterAPI.as_view(), name="home-counter"),
-    path('event-detail/<int:pk>', EventDetailAPI.as_view(), name="event-detail"),
+    path('<slug:slug>', EventDetailAPI.as_view(), name="event-detail"),
     # payment urls
     path("payment/<int:id>", create_checkout_session, name='api_checkout_session'),
     path('success/', PaymentSuccessView.as_view(), name='success'),

@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Count
+from django_extensions.db.fields import AutoSlugField
 
 class Sponsor(models.Model):
     
@@ -51,9 +52,9 @@ class Event(models.Model):
     sponsors = models.ManyToManyField(Sponsor, related_name="sponsor")
     speakers = models.ManyToManyField(Speaker, related_name="speaker")
     
-    
     main_image = models.ImageField(upload_to='images/')
     title = models.CharField(max_length=255)
+    slug = AutoSlugField(populate_from='title', unique=True, null=True, blank=True, max_length=256)
     subtitle = models.CharField(max_length=255)
     event_date = models.DateTimeField()
     location_header = models.CharField(max_length=255)
