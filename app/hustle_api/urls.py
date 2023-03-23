@@ -1,5 +1,5 @@
 from django.urls import path
-from app.hustle_api.views import EventAPIView, EventDetailAPI, GalleryListView, Contact_create, CounterItemAPI
+from app.hustle_api.views import *
 from app.views import create_checkout_session, PaymentSuccessView, paymentfailed
 from django.views.generic import RedirectView
 
@@ -9,6 +9,7 @@ urlpatterns = [
     path('gallery-list/', GalleryListView.as_view(), name="gallery-list"),
     path('create-contact/', Contact_create.as_view(), name="create-contact"),
     path('counter-items/<int:pk>', CounterItemAPI.as_view(), name="counter-items"),
+    path('home-counter/', HomeCounterAPI.as_view(), name="home-counter"),
     path('event-detail/<int:pk>', EventDetailAPI.as_view(), name="event-detail"),
     # payment urls
     path("payment/<int:id>", create_checkout_session, name='api_checkout_session'),

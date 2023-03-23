@@ -5,13 +5,15 @@ from app.models import Event, Gallery, Contact, Items
 from django.http import JsonResponse
 from rest_framework.response import Response
 
+
+# views start from here
+
 class EventAPIView(generics.ListAPIView):
     
     serializer_class = EventSerializer
     queryset = Event.objects.all()
 
 
-    
 class EventDetailAPI(generics.RetrieveAPIView):
     
     serializer_class = EventSerializer
@@ -44,4 +46,12 @@ class CounterItemAPI(generics.ListAPIView):
     
     def get_queryset(self):
         pk = self.kwargs['pk']
-        return Items.objects.filter(event=pk)
+        return Items.objects.filter(event=pk, use_in_home_page=False)
+    
+
+class HomeCounterAPI(generics.ListAPIView):
+    
+    serializer_class = CounterSerializer
+    
+    def get_queryset(self):
+        return Items.objects.filter(use_in_home_page=True)

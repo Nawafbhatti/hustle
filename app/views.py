@@ -1,14 +1,12 @@
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import get_object_or_404
 import stripe
-from django.http import JsonResponse, HttpResponseNotFound, HttpResponse
-from django.views.generic import TemplateView, View
+from django.http import JsonResponse, HttpResponseNotFound
 from django.urls import reverse
-import datetime
 from django.conf import settings
-from django.template.loader import render_to_string
 from app.models import PAYMENT, EventRegisterForm, Event
 from app.hustle_api.serializers import EventRegisterSerializer, PaymentSerializer
-# Create your views here.
+from django.http import HttpResponseRedirect
+# rest frameworks import.
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -25,7 +23,6 @@ def create_checkout_session(request, id):
         return Response(status=status.HTTP_204_NO_CONTENT)
     
     if serializer.is_valid():
-        print(serializer.data, request.POST)
         name = serializer.validated_data['name']
         email = serializer.validated_data['email']
         contact = serializer.validated_data['contact']
@@ -77,7 +74,7 @@ def create_checkout_session(request, id):
     else:
         return Response(status=status.HTTP_403_FORBIDDEN)
 
-from django.http import HttpResponseRedirect
+
 
 class PaymentSuccessView(APIView):
     

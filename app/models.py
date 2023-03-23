@@ -29,7 +29,7 @@ class Speaker(models.Model):
 
     def __str__(self):
         return self.name
-
+    
 
 class Items(models.Model):
     
@@ -38,9 +38,13 @@ class Items(models.Model):
     
     event = models.ForeignKey("Event", related_name="event", on_delete=models.CASCADE, null=True, blank=True)
     
-    def __str__(self):
-        return f"{self.name} - {self.event.title}"
+    use_in_home_page = models.BooleanField(default=False)
     
+    def __str__(self):
+        return f"{self.name}"
+    
+    class Meta:
+        verbose_name = "Event Items Counter"
 
 class Event(models.Model):
     
